@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCknGEDmAIg82JQnlt-xThQgcWPEpZMXz4&sensor=true"></script>
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="cordova.js"></script>
+
+    <!-- your app's js -->
+    <script src="js/app.js"></script>
+    <script src="js/controllers.js"></script>
+    <script src="js/directives.js"></script>
+  </head>
+
+  <body ng-app="starter" ng-controller="MapCtrl">
+    <ion-nav-view>
+      <ion-content>
+        <ion-content class="innerContent">
+          <ion-list>
+            <ion-item item="item" class="item mainPageButton" ng-click="stateChanger()">
+                I need fuel
+            </ion-item>
+            <ion-item item="item" class="item mainPageButton">
+                My Location
+            </ion-item>
+            <ion-item item="item" class="item mainPageButton">
+                Stations near me
+            </ion-item>
+            <ion-item item="item" class="item mainPageButton">
+                Settings
+            </ion-item>
+          </ion-list>
+        </ion-content>
+      </ion-content>
+    </ion-nav-view>
+
+  </body>
+</html>
