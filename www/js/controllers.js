@@ -52,23 +52,14 @@ angular.module('starter.controllers', ['ionic'])
   //  *******************************************
   //  FOR GETTING MY LOCATION AND DISPLAYING MY MARKER
   //  *******************************************
-  //marker array
-   var markers = {};
+     $scope.followMe = function () {
+       if (!$scope.map) {
+         return;
+       };
+       $scope.followingMe = true;
+       createMarker();
+       $scope.watchID = navigator.geolocation.watchPosition(onSuccess, onError, { timeout: 3000000, enableHighAccuracy: true });
 
-   $scope.followMe = function () {
-     if (!$scope.map) {
-       return;
-     };
-     $scope.followingMe = true;
-     createMarker();
-     $scope.watchID = navigator.geolocation.watchPosition(onSuccess, onError, { timeout: 3000000, enableHighAccuracy: true });
-
-     // onError Callback receives a PositionError object
-     //
-     function onError(error) {
-         alert('code: '    + error.code    + '\n' +
-         'message: ' + error.message + '\n');
-       }
      };
 
      $scope.stopFollowingMe = function(){
@@ -88,6 +79,15 @@ angular.module('starter.controllers', ['ionic'])
         $scope.myLocationMarker.setPosition(myLatlng);
       };
 
+      // onError Callback receives a PositionError object
+      function onError(error) {
+          alert('code: '    + error.code    + '\n' +
+          'message: ' + error.message + '\n');
+        }
+
+      //marker array
+      var markers = {};
+
       function createMarker(){
         var id = "myLocationMarker";
         var meImage = 'http://maps.google.com/intl/en_us/mapfiles/ms/micons/green.png';
@@ -99,4 +99,27 @@ angular.module('starter.controllers', ['ionic'])
         });
         markers[id] = $scope.myLocationMarker;
       }
+
+      //  *******************************************
+      //  FOR GETTING DIRECTIONS TO A MARKER
+      //  *******************************************
+      var directionsService = new google.maps.DirectionsService;
+      var directionsDisplay = new google.maps.DirectionsRenderer;
+      directionsDisplay.setMap($scope.map);
+
+      $scope.getMeDirections = function(){
+
+        directionsService.route({
+          origin: "Sheffield",
+          destination: "Leeds",
+          travelMode: 'DRIVING'
+        }, function(response, status) {
+          if (status === 'OK') {
+            directionsDisplay.setDirections(response);
+          } else {
+            alert('Directions request failed due to ' + status);
+          }
+        });
+      };
+
 });
