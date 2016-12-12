@@ -59,7 +59,7 @@ angular.module('starter.controllers', ['ionic'])
        $scope.followingMe = true;
        createMarker();
        $scope.watchID = navigator.geolocation.watchPosition(onSuccess, onError, { timeout: 3000000, enableHighAccuracy: true });
-
+       $scope.map.setZoom(20); 
      };
 
      $scope.stopFollowingMe = function(){
@@ -69,7 +69,7 @@ angular.module('starter.controllers', ['ionic'])
      };
 
      function clearMyLocationMarker(){
-       var marker = markers["myLocationMarker"];
+       var marker = markers[1];
        marker.setMap(null);
      }
 
@@ -83,13 +83,13 @@ angular.module('starter.controllers', ['ionic'])
       function onError(error) {
           alert('code: '    + error.code    + '\n' +
           'message: ' + error.message + '\n');
-        }
+      }
 
       //marker array
       var markers = {};
 
       function createMarker(){
-        var id = "myLocationMarker";
+        var id = 1;
         var meImage = 'http://maps.google.com/intl/en_us/mapfiles/ms/micons/green.png';
         $scope.myLocationMarker = new google.maps.Marker({
           map: $scope.map,
@@ -108,9 +108,9 @@ angular.module('starter.controllers', ['ionic'])
       directionsDisplay.setMap($scope.map);
 
       $scope.getMeDirections = function(){
-
+        navigator.geolocation.getCurrentPosition(onSuccessGetLocation, onErrorGetLocation);
         directionsService.route({
-          origin: "Sheffield",
+          origin: $scope.myLatLngForPosition,
           destination: "Leeds",
           travelMode: 'DRIVING'
         }, function(response, status) {
@@ -122,4 +122,15 @@ angular.module('starter.controllers', ['ionic'])
         });
       };
 
+      var onSuccessGetLocation = function(position) {
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+        $scope.myLatLngForPosition = {lat: lat, lng: lng};
+
+    };
+
+    function onErrorGetLocation(error) {
+        alert('code: '    + error.code    + '\n' +
+              'message: ' + error.message + '\n');
+    }
 });

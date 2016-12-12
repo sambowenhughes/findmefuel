@@ -1,7 +1,7 @@
 <ion-popover-view>
         <ion-content>
           <div class="list">
-            <a class="item ion-android-car" target="_blank" ng-click="getMeDirections(); popover.hide($event);">
+            <a class="item ion-android-car" target="_blank" ng-click="popover.hide($event); getMeDirections();">
               &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Find Me Fuel
             </a>
             <a class="item ion-navigate" ng-show="!followingMe" target="_blank" ng-click="followMe(); popover.hide($event);">
