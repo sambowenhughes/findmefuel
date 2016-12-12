@@ -4,8 +4,11 @@
             <a class="item ion-android-car" target="_blank">
               &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Find Me Fuel
             </a>
-            <a class="item ion-navigate" target="_blank" ng-click="followMe(); popover.hide($event);">
+            <a class="item ion-navigate" ng-show="!followingMe" target="_blank" ng-click="followMe(); popover.hide($event);">
               &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp My Location
+            </a>
+            <a class="item ion-navigate positive" ng-show="followingMe" target="_blank" ng-click="stopFollowingMe(); popover.hide($event);">
+              &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Stop Following me
             </a>
             <a class="item ion-ios-location" target="_blank">
               &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Stations Near Me

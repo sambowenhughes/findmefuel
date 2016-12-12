@@ -31,16 +31,15 @@ angular.module('starter.controllers', ['ionic'])
     how many times will it take to send
     before you reply and claim your spends
 
+    oh so rude, Im very impressed
+    its been a while since Ive seen your breasts
+    half one seems so far away
+    Id rather sneak under your table
+    and have a play
+
 
 
     */
-    $scope.demo = 'ios';
-    $scope.setPlatform = function(p) {
-      document.body.classList.remove('platform-ios');
-      document.body.classList.remove('platform-android');
-      document.body.classList.add('platform-' + p);
-      $scope.demo = p;
-    }
 
    //*******************************************
    //      FOR SETTING UP MAP
@@ -51,35 +50,53 @@ angular.module('starter.controllers', ['ionic'])
    };
 
   //  *******************************************
-  //  FOR GETTING MY LOCATION AND DISPLAYING MARKERS
+  //  FOR GETTING MY LOCATION AND DISPLAYING MY MARKER
   //  *******************************************
+  //marker array
+   var markers = {};
+
    $scope.followMe = function () {
      if (!$scope.map) {
        return;
      };
+     $scope.followingMe = true;
      createMarker();
      $scope.watchID = navigator.geolocation.watchPosition(onSuccess, onError, { timeout: 3000000, enableHighAccuracy: true });
 
-      function onSuccess(position) {
+     // onError Callback receives a PositionError object
+     //
+     function onError(error) {
+         alert('code: '    + error.code    + '\n' +
+         'message: ' + error.message + '\n');
+       }
+     };
+
+     $scope.stopFollowingMe = function(){
+       $scope.followingMe = false;
+       navigator.geolocation.clearWatch($scope.watchID);
+       clearMyLocationMarker();
+     };
+
+     function clearMyLocationMarker(){
+       var marker = markers["myLocationMarker"];
+       marker.setMap(null);
+     }
+
+     function onSuccess(position) {
         var myLatlng = {lat: position.coords.latitude, lng: position.coords.longitude};
         $scope.map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
-        $scope.marker.setPosition(myLatlng);
+        $scope.myLocationMarker.setPosition(myLatlng);
       };
 
       function createMarker(){
+        var id = "myLocationMarker";
         var meImage = 'http://maps.google.com/intl/en_us/mapfiles/ms/micons/green.png';
-        $scope.marker = new google.maps.Marker({
+        $scope.myLocationMarker = new google.maps.Marker({
           map: $scope.map,
+          id: id,
           position: null,
           icon: meImage
         });
+        markers[id] = $scope.myLocationMarker;
       }
-
-      // onError Callback receives a PositionError object
-      //
-      function onError(error) {
-          alert('code: '    + error.code    + '\n' +
-          'message: ' + error.message + '\n');
-        }
-      };
 });
