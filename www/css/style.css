@@ -25,3 +25,28 @@ map {
   background-color: white;
   margin:12%;
 }
+
+.directionsBox{
+  background-color: white;
+  position: relative;
+  overflow: auto;
+  margin-top: 110%;
+  height: 31%;
+  border: 2px grey solid;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 20px;
+}
+
+.directions{
+  margin:3px;
+}
+
+.directions-nav{
+  position: fixed;
+  width: 100%;
+}
+.lowerDirectionsDiv{
+  position: relative;
+}

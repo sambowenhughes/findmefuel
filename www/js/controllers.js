@@ -47,6 +47,8 @@ angular.module('starter.controllers', ['ionic'])
    $scope.mapCreated = function(map) {
      $scope.map = map;
      directionsDisplay.setMap($scope.map);
+     //Hide the directions pop up when first loading app
+     $scope.directionsPresent = false;
    };
 
   //  *******************************************
@@ -59,7 +61,7 @@ angular.module('starter.controllers', ['ionic'])
        $scope.followingMe = true;
        createMarker();
        $scope.watchID = navigator.geolocation.watchPosition(onSuccess, onError, { timeout: 3000000, enableHighAccuracy: true });
-       $scope.map.setZoom(20); 
+       $scope.map.setZoom(16);
      };
 
      $scope.stopFollowingMe = function(){
@@ -79,7 +81,6 @@ angular.module('starter.controllers', ['ionic'])
         $scope.myLocationMarker.setPosition(myLatlng);
       };
 
-      // onError Callback receives a PositionError object
       function onError(error) {
           alert('code: '    + error.code    + '\n' +
           'message: ' + error.message + '\n');
@@ -106,16 +107,21 @@ angular.module('starter.controllers', ['ionic'])
       var directionsService = new google.maps.DirectionsService;
       var directionsDisplay = new google.maps.DirectionsRenderer;
       directionsDisplay.setMap($scope.map);
+      directionsDisplay.setPanel(document.getElementById('directions-panel'));
 
       $scope.getMeDirections = function(){
         navigator.geolocation.getCurrentPosition(onSuccessGetLocation, onErrorGetLocation);
         directionsService.route({
+          //There is a delay from finding my position
+          //this is therefore causing a lag and resulting
+          //in having to tap the button twice
           origin: $scope.myLatLngForPosition,
           destination: "Leeds",
           travelMode: 'DRIVING'
         }, function(response, status) {
           if (status === 'OK') {
             directionsDisplay.setDirections(response);
+            $scope.directionsPresent = true;
           } else {
             alert('Directions request failed due to ' + status);
           }
@@ -132,5 +138,15 @@ angular.module('starter.controllers', ['ionic'])
     function onErrorGetLocation(error) {
         alert('code: '    + error.code    + '\n' +
               'message: ' + error.message + '\n');
+    }
+
+    //  *******************************************
+    //  FOR TOGGLING DIRECTIONS BOX
+    //  *******************************************
+    $scope.toggleView = function(){
+      //need to work on how to toggle this nav
+      //also css styling needs doing for positioning looks abit naff
+      document.getElementById('editBox').style.height = '10%';
+      document.getElementById('editBox').style.marginTop = '145%';
     }
 });
