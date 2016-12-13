@@ -28,20 +28,21 @@
 
   <body ng-app="starter" ng-controller="MapCtrl">
     <ion-nav-view>
-      <ion-content>
+      <ion-content class="homePage">
         <ion-content class="innerContent">
           <ion-list>
-            <ion-item item="item" class="item mainPageButton" ng-click="stateChanger()">
-                I need fuel
+            <!--stateChanger()-->
+            <ion-item class="item item-icon-right directions-navs mainPageButton" ng-click="stateChanger()">
+              <p>Welcome<i class="icon ion-android-globe"></i></p>
             </ion-item>
-            <ion-item item="item" class="item mainPageButton">
-                My Location
+            <ion-item class="item item-icon-right directions-navs mainPageButton" ng-click="stateChanger()">
+              <p>Find Me fuel</p><i class="icon ion-android-car"></i>
             </ion-item>
-            <ion-item item="item" class="item mainPageButton">
-                Stations near me
+            <ion-item class="item item-icon-right directions-navs mainPageButton" ng-click="stateChanger()">
+              <p>My Location</p><i class="icon ion-android-pin"></i>
             </ion-item>
-            <ion-item item="item" class="item mainPageButton">
-                Settings
+            <ion-item class="item item-icon-right directions-navs mainPageButton" ng-click="stateChanger()">
+              <p>Settings</p><i class="icon ion-ios-gear"></i>
             </ion-item>
           </ion-list>
         </ion-content>
