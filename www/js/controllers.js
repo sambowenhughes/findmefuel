@@ -92,12 +92,19 @@ angular.module('starter.controllers', ['ionic'])
 
       function createMarker(){
         var id = 1;
+        var icon = {
+          url: "../www/img/car_icon.png", // url
+          scaledSize: new google.maps.Size(30, 30), // scaled size
+          origin: new google.maps.Point(0,0), // origin
+          anchor: new google.maps.Point(0, 0) // anchor
+      };
+        var myImage = '';
         var meImage = 'http://maps.google.com/intl/en_us/mapfiles/ms/micons/green.png';
         $scope.myLocationMarker = new google.maps.Marker({
           map: $scope.map,
           id: id,
           position: null,
-          icon: meImage
+          icon: icon
         });
         markers[id] = $scope.myLocationMarker;
       }

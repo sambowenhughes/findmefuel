@@ -6,13 +6,13 @@
           <map on-create="mapCreated(map)"></map>
   </ion-content>
   <!--ng-show="directionsPresent" this is to go in the edit box id -->
-    <div id="editBox" class="innerContent directionsBox" ng-show="directionsPresent"  ng-click="toggleView()">
-      <a class="item item-icon-right directions-nav" href="#" >
+    <div id="editBox" class="innerContent directionsBox"  ng-show="directionsPresent" ng-click="toggleView()">
+      <div class="item item-icon-right directions-nav" href="#" >
         <i class="icon ion-android-car"></i>
           Directions
-      </a>
-      <div class="lowerDirectionsDiv">
-        <div id="directions-panel" class="directions"> </div>
+      </div>
+      <div id="directions-panel" class="lowerDirectionsDiv">
+        <div  class="directions">  </div>
     </div>
   </div>
   <ion-footer-bar class="bar-stable lower-nav">

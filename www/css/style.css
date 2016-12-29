@@ -38,10 +38,10 @@ map {
 /*------------------------------
 //     For the Directions
 /*------------------------------*/
+/*main box*/
 .directionsBox{
   background-color: white;
   position: relative;
-  overflow: auto;
   margin-top: 110%;
   height: 31%;
   border: 2px grey solid;
@@ -49,18 +49,24 @@ map {
   margin-left: auto;
   margin-right: auto;
   border-radius: 20px;
+  overflow: scroll;
 }
 
 .directions{
-  margin:3px;
+margin-top:20%;
 }
 
 .directions-nav{
   position: fixed;
   width: 100%;
+  height: 63px;
+  border-top-left-radius: 22px;
+  border-top-right-radius: 22px;
 }
 .lowerDirectionsDiv{
-  position: relative;
+  position: absolute;
+
+
 }
 
 /*------------------------------
