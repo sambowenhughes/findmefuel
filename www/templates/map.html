@@ -5,15 +5,16 @@
   <ion-content scroll="false">
           <map on-create="mapCreated(map)"></map>
   </ion-content>
-    <div id="editBox" class="innerContent directionsBox" ng-show="directionsPresent">
-      <a class="item item-icon-right directions-nav" href="#" ng-click="toggleView()">
+  <!--ng-show="directionsPresent" this is to go in the edit box id -->
+    <div id="editBox" class="innerContent directionsBox" ng-show="directionsPresent"  ng-click="toggleView()">
+      <a class="item item-icon-right directions-nav" href="#" >
         <i class="icon ion-android-car"></i>
           Directions
       </a>
       <div class="lowerDirectionsDiv">
-        <div id="directions-panel" class="directions"></div>
-      </div>
+        <div id="directions-panel" class="directions"> </div>
     </div>
+  </div>
   <ion-footer-bar class="bar-stable lower-nav">
     <a ng-click="#" class="button button-icon icon ion-ios-home"></a>
     <a ng-click="popover.show($event)" class="button button-icon ion-more"></a>

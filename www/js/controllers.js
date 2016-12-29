@@ -4,6 +4,7 @@ angular.module('starter.controllers', ['ionic'])
 
   $scope.stateChanger = function(){
     $state.go('app.mainMap');
+    $scope.directionsPresent = false;
   };
 
   $scope.goToMainMenu = function(){
@@ -48,7 +49,7 @@ angular.module('starter.controllers', ['ionic'])
      $scope.map = map;
      directionsDisplay.setMap($scope.map);
      //Hide the directions pop up when first loading app
-     $scope.directionsPresent = false;
+
    };
 
   //  *******************************************
@@ -116,12 +117,13 @@ angular.module('starter.controllers', ['ionic'])
           //this is therefore causing a lag and resulting
           //in having to tap the button twice
           origin: $scope.myLatLngForPosition,
-          destination: "Leeds",
+          destination: "Trafford Quays Leisure Village",
           travelMode: 'DRIVING'
         }, function(response, status) {
           if (status === 'OK') {
-            directionsDisplay.setDirections(response);
             $scope.directionsPresent = true;
+            directionsDisplay.setDirections(response);
+
           } else {
             alert('Directions request failed due to ' + status);
           }
@@ -144,9 +146,13 @@ angular.module('starter.controllers', ['ionic'])
     //  FOR TOGGLING DIRECTIONS BOX
     //  *******************************************
     $scope.toggleView = function(){
-      //need to work on how to toggle this nav
-      //also css styling needs doing for positioning looks abit naff
-      document.getElementById('editBox').style.height = '10%';
-      document.getElementById('editBox').style.marginTop = '145%';
+      var divSize = document.getElementById("editBox").style.height;
+      if (divSize != "10%"){
+        document.getElementById('editBox').style.height = '10%';
+        document.getElementById('editBox').style.marginTop = '145%';
+      }  else{
+          document.getElementById('editBox').style.height = '31%';
+          document.getElementById('editBox').style.marginTop = '110%';
+        }
     }
 });
