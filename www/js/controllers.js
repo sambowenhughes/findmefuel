@@ -1,6 +1,6 @@
-angular.module('starter.controllers', ['ionic'])
+angular.module('starter.controllers', ['ionic','firebase'])
 
-.controller('MapCtrl', function($scope, $state, $ionicLoading,  $ionicActionSheet, $ionicPopover) {
+.controller('MapCtrl', function($scope, $state, $ionicLoading,  $ionicActionSheet, $ionicPopover, $firebase) {
 
   $scope.stateChanger = function(){
     $state.go('app.mainMap');
@@ -41,7 +41,6 @@ angular.module('starter.controllers', ['ionic'])
 
 
     */
-
    //*******************************************
    //      FOR SETTING UP MAP
    //*******************************************
@@ -49,6 +48,7 @@ angular.module('starter.controllers', ['ionic'])
      $scope.map = map;
      directionsDisplay.setMap($scope.map);
      //Hide the directions pop up when first loading app
+
 
    };
 
@@ -162,4 +162,17 @@ angular.module('starter.controllers', ['ionic'])
           document.getElementById('editBox').style.marginTop = '110%';
         }
     }
+
+    //  *******************************************
+    //  FOR FIREBASE
+    //  *******************************************
+    $scope.firebaseCheck = function(){
+      //This is called when the prefgerences button is selected on the popover menu
+      alert("firebase checking called");
+      //creating a reference to the firebase URL created under 'findMeFuel'
+      var ref = new Firebase("https://findmefuel-3c346.firebaseio.com/");
+      //alerting the referencve created to firebase to check that th3e connecvtion has been made successfully
+      alert(JSON.stringify(ref));
+    }
+
 });
