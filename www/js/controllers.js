@@ -38,15 +38,50 @@ angular.module('starter.controllers', ['ionic','firebase'])
     Id rather sneak under your table
     and have a play
 
+    //---------------------------------------
+
+    You do know the way to my heart
+    A bit of welsh tongue and Im there in ...
+    2017 should be fun
 
 
-    */
+    You do know the way to my heart
+    A bit fo welsh tongue and it egnites the spark
+    2017 is going to be so fun
+    I already miss your peachy bum
+    I hope to see you sometime this month
+    so the games can begin again we can have some fun
+
+
+
+
+
+    //*******************************************
+    //      Creating the firebase reference
+    //********************************************/
+    var database = null;
+    function onPageLoad(){
+      var config = {
+        apiKey: "AIzaSyCYDlrU2O3OT4jaJnaCF5krqCbof67yTWU",
+        authDomain: "findmefuel-3c346.firebaseapp.com",
+        databaseURL: "https://findmefuel-3c346.firebaseio.com",
+        storageBucket: "findmefuel-3c346.appspot.com",
+        messagingSenderId: "386153049618"
+      };
+      firebase.initializeApp(config);
+      database = firebase.database();
+    }
+
+
+
    //*******************************************
    //      FOR SETTING UP MAP
    //*******************************************
    $scope.mapCreated = function(map) {
      $scope.map = map;
      directionsDisplay.setMap($scope.map);
+     onPageLoad();
+
      //Hide the directions pop up when first loading app
 
 
@@ -167,12 +202,11 @@ angular.module('starter.controllers', ['ionic','firebase'])
     //  FOR FIREBASE
     //  *******************************************
     $scope.firebaseCheck = function(){
-      //This is called when the prefgerences button is selected on the popover menu
-      alert("firebase checking called");
-      //creating a reference to the firebase URL created under 'findMeFuel'
-      var ref = new Firebase("https://findmefuel-3c346.firebaseio.com/");
-      //alerting the referencve created to firebase to check that th3e connecvtion has been made successfully
-      alert(JSON.stringify(ref));
+      var datafromDatabase = database.ref().child("database");
+      datafromDatabase.on('value', function(snapshot) {
+        alert(snapshot.val());
+      });
+
     }
 
 });
