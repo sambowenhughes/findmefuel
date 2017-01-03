@@ -10,6 +10,16 @@ angular.module('starter.controllers', ['ionic','firebase'])
   $scope.goToMainMenu = function(){
 
   };
+
+  //*******************************************
+  //      FOR SETTING UP MAP
+  //*******************************************
+    $scope.mapCreated = function(map) {
+      $scope.map = map;
+      directionsDisplay.setMap($scope.map);
+      onPageLoad();
+    };
+
   //*******************************************
   //      FOR POP UP ACTION SHEET
   //*******************************************
@@ -19,48 +29,17 @@ angular.module('starter.controllers', ['ionic','firebase'])
       $scope.popover = popover;
     });
 
-    /*
-
-    If only you knew about the game I play
-    sitting here infront of you - laughing all day
-    when you find out I hope you laugh
-
-    what to text, its baffiling me
-    maybe mention an injury?
-    If only you knew about the game I play
-    sitting here infront of you - laughing all day
-    how many times will it take to send
-    before you reply and claim your spends
-
-    oh so rude, Im very impressed
-    its been a while since Ive seen your breasts
-    half one seems so far away
-    Id rather sneak under your table
-    and have a play
-
-    //---------------------------------------
-
-    You do know the way to my heart
-    A bit of welsh tongue and Im there in ...
-    2017 should be fun
-
-
-    You do know the way to my heart
-    A bit fo welsh tongue and it egnites the spark
-    2017 is going to be so fun
-    I already miss your peachy bum
-    I hope to see you sometime this month
-    so the games can begin again we can have some fun
-
-
-
-
-
     //*******************************************
-    //      Creating the firebase reference
+    //  Setting up everything when the map loads on the screen
     //********************************************/
     var database = null;
     function onPageLoad(){
+      setupFirebaseConfig();
+      setupFuelStations();
+    }
+
+    //setup my firebase configuration
+    function setupFirebaseConfig(){
       var config = {
         apiKey: "AIzaSyCYDlrU2O3OT4jaJnaCF5krqCbof67yTWU",
         authDomain: "findmefuel-3c346.firebaseapp.com",
@@ -72,20 +51,6 @@ angular.module('starter.controllers', ['ionic','firebase'])
       database = firebase.database();
     }
 
-
-
-   //*******************************************
-   //      FOR SETTING UP MAP
-   //*******************************************
-   $scope.mapCreated = function(map) {
-     $scope.map = map;
-     directionsDisplay.setMap($scope.map);
-     onPageLoad();
-
-     //Hide the directions pop up when first loading app
-
-
-   };
 
   //  *******************************************
   //  FOR GETTING MY LOCATION AND DISPLAYING MY MARKER
@@ -133,8 +98,6 @@ angular.module('starter.controllers', ['ionic','firebase'])
           origin: new google.maps.Point(0,0), // origin
           anchor: new google.maps.Point(0, 0) // anchor
       };
-        var myImage = '';
-        var meImage = 'http://maps.google.com/intl/en_us/mapfiles/ms/micons/green.png';
         $scope.myLocationMarker = new google.maps.Marker({
           map: $scope.map,
           id: id,
@@ -199,14 +162,48 @@ angular.module('starter.controllers', ['ionic','firebase'])
     }
 
     //  *******************************************
-    //  FOR FIREBASE
+    //  GETTING THE DATA FROM THE FIREBASE DATABASE
     //  *******************************************
-    $scope.firebaseCheck = function(){
-      var datafromDatabase = database.ref().child("database");
+    function setupFuelStations(){
+      var datafromDatabase = database.ref().child("Stations").limitToLast(100);
+      var data = null;
       datafromDatabase.on('value', function(snapshot) {
-        alert(snapshot.val());
+        //alert(JSON.stringify(snapshot.val()));
+        data = snapshot.val();
+
+        placeStationMarkerOnMap(data);
       });
 
+    }
+
+
+    function placeStationMarkerOnMap(data){
+      var lat = data.Shell.lat;
+      var lng = data.Shell.lng;
+
+      var coordinates = new google.maps.LatLng(lat,lng);
+      var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+
+      var stationMarker = new google.maps.Marker({
+        map: $scope.map,
+        id: 2,
+        position: coordinates,
+        icon: image
+      });
+      alert("Station added success");
+    }
+
+    //  *******************************************
+    //  Petrol Station array ( not set up properly yet)
+    //  *******************************************
+    function placeStationsOnMap(){
+      var stations = [
+        ['Bondi Beach', -33.890542, 151.274856, 4],
+        ['Coogee Beach', -33.923036, 151.259052, 5],
+        ['Cronulla Beach', -34.028249, 151.157507, 3],
+        ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
+        ['Maroubra Beach', -33.950198, 151.259302, 1]
+      ];
     }
 
 });
