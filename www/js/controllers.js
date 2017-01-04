@@ -172,25 +172,47 @@ angular.module('starter.controllers', ['ionic','firebase'])
         data = snapshot.val();
 
         placeStationMarkerOnMap(data);
+        //createStations(data);
       });
 
     }
 
+    function createStations(data){
+      //data from the database
+      alert(JSON.stringify(data));
+    }
 
     function placeStationMarkerOnMap(data){
-      var lat = data.Shell.lat;
-      var lng = data.Shell.lng;
-
+      //Details for the marker got from the database
+      var image = "../www/img/"+data[0].Icon;
+      var icon = {
+        url: image, // url
+        scaledSize: new google.maps.Size(25, 25), // scaled size
+        origin: new google.maps.Point(0,0), // origin
+        anchor: new google.maps.Point(0, 0) // anchor
+      };
+      var name = data[0].Name;
+      var lat = data[0].Position.Lat;
+      var lng = data[0].Position.Lng;
       var coordinates = new google.maps.LatLng(lat,lng);
-      var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
 
+      //actuallyt creating the marker using the data collected
       var stationMarker = new google.maps.Marker({
         map: $scope.map,
         id: 2,
         position: coordinates,
-        icon: image
+        title: name,
+        icon: icon
       });
-      alert("Station added success");
+
+      var content = "<div><h5>Diesel:</h5>  £1.38</div><div><h5>Petrol:</h5>  £1.14</div>"
+      var infowindow = new google.maps.InfoWindow({
+          content: content
+        });
+
+      stationMarker.addListener('click', function() {
+         infowindow.open($scope.map, stationMarker);
+       });
     }
 
     //  *******************************************
@@ -205,5 +227,7 @@ angular.module('starter.controllers', ['ionic','firebase'])
         ['Maroubra Beach', -33.950198, 151.259302, 1]
       ];
     }
+
+
 
 });
