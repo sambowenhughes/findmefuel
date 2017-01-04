@@ -171,8 +171,10 @@ angular.module('starter.controllers', ['ionic','firebase'])
         //alert(JSON.stringify(snapshot.val()));
         data = snapshot.val();
 
-        placeStationMarkerOnMap(data);
+        //placeStationMarkerOnMap(data);
         //createStations(data);
+
+        createStationMarkers(data);
       });
 
     }
@@ -196,7 +198,7 @@ angular.module('starter.controllers', ['ionic','firebase'])
       var lng = data[0].Position.Lng;
       var coordinates = new google.maps.LatLng(lat,lng);
 
-      //actuallyt creating the marker using the data collected
+      //actually creating the marker using the data collected
       var stationMarker = new google.maps.Marker({
         map: $scope.map,
         id: 2,
@@ -205,8 +207,7 @@ angular.module('starter.controllers', ['ionic','firebase'])
         icon: icon
       });
 
-      var content = "<div><h5>Diesel:</h5>  £1.38</div><div><h5>Petrol:</h5>  £1.14</div>"
-      var infowindow = new google.maps.InfoWindow({
+        var infowindow = new google.maps.InfoWindow({
           content: content
         });
 
@@ -215,19 +216,42 @@ angular.module('starter.controllers', ['ionic','firebase'])
        });
     }
 
-    //  *******************************************
-    //  Petrol Station array ( not set up properly yet)
-    //  *******************************************
-    function placeStationsOnMap(){
-      var stations = [
-        ['Bondi Beach', -33.890542, 151.274856, 4],
-        ['Coogee Beach', -33.923036, 151.259052, 5],
-        ['Cronulla Beach', -34.028249, 151.157507, 3],
-        ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
-        ['Maroubra Beach', -33.950198, 151.259302, 1]
-      ];
-    }
+    function createStationMarkers(data){
+      //var amountOfStations = data.stations.count();
+      for(var i = 0; i < 2; i++){
+        var image = "../www/img/"+data[i].Icon;
+        var icon = {
+          url: image, // url
+          scaledSize: new google.maps.Size(25, 25), // scaled size
+          origin: new google.maps.Point(0,0), // origin
+          anchor: new google.maps.Point(0, 0) // anchor
+        };
+        var name = data[i].Name;
+        var dieselPrice = data[i].DieselPrice;
+        var petrolPrice = data[i].PetrolPrice;
+        var lat = data[i].Position.Lat;
+        var lng = data[i].Position.Lng;
+        var coordinates = new google.maps.LatLng(lat,lng);
+        var content = "<div><h5>Diesel:</h5>"+dieselPrice+" </div><div><h5>Petrol:</h5>"+petrolPrice+"</div>"
 
+        var stationMarker = 100+i;
+        stationMarker = new google.maps.Marker({
+          map: $scope.map,
+          id: i,
+          position: coordinates,
+          title: name,
+          icon: icon
+        });
 
+        var infowindow = 1+i;
+        var infowindow = new google.maps.InfoWindow({
+            content: content
+          });
+
+        stationMarker.addListener('click', function() {
+           infowindow.open($scope.map, stationMarker);
+         });
+      }
+  }
 
 });
