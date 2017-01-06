@@ -42,7 +42,7 @@ map {
 .directionsBox{
   background-color: white;
   position: relative;
-  margin-top: 110%;
+  margin-top: 80%;
   height: 31%;
   border: 2px grey solid;
   width: 100%;
@@ -68,6 +68,17 @@ margin-top:20%;
 
 
 }
+
+/*---------------------------------
+//     For the closest station box
+/*--------------------------------*/
+.closestStationDiv{
+  background-color: white;
+  border: 3px black solid;
+  position: relative;
+  padding: 10px;
+}
+
 
 /*------------------------------
 //     For the Main Menu

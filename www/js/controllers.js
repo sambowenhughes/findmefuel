@@ -36,6 +36,7 @@ angular.module('starter.controllers', ['ionic','firebase'])
     function onPageLoad(){
       setupFirebaseConfig();
       setupFuelStations();
+
     }
 
     //setup my firebase configuration
@@ -50,8 +51,24 @@ angular.module('starter.controllers', ['ionic','firebase'])
       firebase.initializeApp(config);
       database = firebase.database();
     }
+  //  *******************************************
+  //  FOR FINDING THE CLOSEST STATIONS
+  //  *******************************************
 
+     $scope.searchForClosestStation = function(){
+      $scope.closestStation = "Testing Shell";
+      for(var i = 0; i < stationsCoordinates.length; i++){
 
+        var journeyTime = getjourneyTime(stationsCoordinates[i]);
+      //  alert(journeyTime]);
+
+      }
+
+      function getjourneyTime(latLng){
+          alert(JSON.stringify(latLng));
+      }
+
+    }
   //  *******************************************
   //  FOR GETTING MY LOCATION AND DISPLAYING MY MARKER
   //  *******************************************
@@ -127,6 +144,10 @@ angular.module('starter.controllers', ['ionic','firebase'])
         }, function(response, status) {
           if (status === 'OK') {
             $scope.directionsPresent = true;
+            //this returns the value as a string
+            alert(JSON.stringify(response.routes[0].legs[0].duration.text));
+            //this returns the value in milliseconds (what we want)
+            alert(JSON.stringify(response.routes[0].legs[0].duration.value));
             directionsDisplay.setDirections(response);
 
           } else {
@@ -154,19 +175,19 @@ angular.module('starter.controllers', ['ionic','firebase'])
       var divSize = document.getElementById("editBox").style.height;
       if (divSize != "10%"){
         document.getElementById('editBox').style.height = '10%';
-        document.getElementById('editBox').style.marginTop = '145%';
+        document.getElementById('editBox').style.marginTop = '115%';
       }  else{
           document.getElementById('editBox').style.height = '31%';
-          document.getElementById('editBox').style.marginTop = '110%';
+          document.getElementById('editBox').style.marginTop = '80%';
         }
     }
 
     //  *******************************************
     //  GETTING THE DATA FROM THE FIREBASE DATABASE
     //  *******************************************
+    var data = null;
     function setupFuelStations(){
       var datafromDatabase = database.ref().child("Stations").limitToLast(100);
-      var data = null;
       datafromDatabase.on('value', function(snapshot) {
         data = snapshot.val();
         createStationMarkers(data);
@@ -199,23 +220,24 @@ angular.module('starter.controllers', ['ionic','firebase'])
         //add the coordinate to the array
         stationsCoordinates[i] = coordinate;
         var content = "<div><h5>Diesel:</h5>"+dieselPrice+" </div><div><h5>Petrol:</h5>"+petrolPrice+"</div>"
-
-        var stationMarker = 100+i;
-        stationMarker = new google.maps.Marker({
+        var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+      //  var stationMarker = 100+i;
+      var stationMarker = new google.maps.Marker({
           map: $scope.map,
           id: i,
           position: coordinate,
           title: name,
-          icon: icon
+          icon: image
         });
 
-        var infowindow = 1+i;
+
         var infowindow = new google.maps.InfoWindow({
             content: content
           });
 
         stationMarker.addListener('click', function() {
-           infowindow.open($scope.map, stationMarker);
+           // infowindow.open($scope.map, stationMarker);
+           alert(stationMarker.title);
          });
       }
   }

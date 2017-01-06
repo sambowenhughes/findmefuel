@@ -10,10 +10,10 @@
             <a class="item ion-navigate positive" ng-show="followingMe" target="_blank" ng-click="stopFollowingMe(); popover.hide($event);">
               &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Stop Following me
             </a>
-            <a class="item ion-ios-location" target="_blank">
+            <a class="item ion-ios-location" target="_blank" ng-click="searchForClosestStation();">
               &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Stations Near Me
             </a>
-            <a class="item ion-gear-a" target="_blank" ng-click="showArrayData();">
+            <a class="item ion-gear-a" target="_blank" ng-click="">
               &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp My Preferences
             </a>
             <a class="item assertive" target="_blank" ng-click="popover.hide($event)">
