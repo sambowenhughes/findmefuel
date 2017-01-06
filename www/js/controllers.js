@@ -217,12 +217,12 @@ angular.module('starter.controllers', ['ionic','firebase'])
     }
 
     function createStationMarkers(data){
-      //var amountOfStations = data.stations.count();
-      for(var i = 0; i < 2; i++){
+      var amountOfStations = data.length;
+      for(var i = 0; i < amountOfStations; i++){
         var image = "../www/img/"+data[i].Icon;
         var icon = {
           url: image, // url
-          scaledSize: new google.maps.Size(25, 25), // scaled size
+          scaledSize: new google.maps.Size(20, 20), // scaled size
           origin: new google.maps.Point(0,0), // origin
           anchor: new google.maps.Point(0, 0) // anchor
         };
