@@ -87,7 +87,7 @@ angular.module('starter.controllers', ['ionic','firebase'])
           'message: ' + error.message + '\n');
       }
 
-      //marker array
+
       var markers = {};
 
       function createMarker(){
@@ -168,54 +168,18 @@ angular.module('starter.controllers', ['ionic','firebase'])
       var datafromDatabase = database.ref().child("Stations").limitToLast(100);
       var data = null;
       datafromDatabase.on('value', function(snapshot) {
-        //alert(JSON.stringify(snapshot.val()));
         data = snapshot.val();
-
-        //placeStationMarkerOnMap(data);
-        //createStations(data);
-
         createStationMarkers(data);
       });
-
     }
 
-    function createStations(data){
-      //data from the database
-      alert(JSON.stringify(data));
-    }
 
-    function placeStationMarkerOnMap(data){
-      //Details for the marker got from the database
-      var image = "../www/img/"+data[0].Icon;
-      var icon = {
-        url: image, // url
-        scaledSize: new google.maps.Size(25, 25), // scaled size
-        origin: new google.maps.Point(0,0), // origin
-        anchor: new google.maps.Point(0, 0) // anchor
-      };
-      var name = data[0].Name;
-      var lat = data[0].Position.Lat;
-      var lng = data[0].Position.Lng;
-      var coordinates = new google.maps.LatLng(lat,lng);
-
-      //actually creating the marker using the data collected
-      var stationMarker = new google.maps.Marker({
-        map: $scope.map,
-        id: 2,
-        position: coordinates,
-        title: name,
-        icon: icon
-      });
-
-        var infowindow = new google.maps.InfoWindow({
-          content: content
-        });
-
-      stationMarker.addListener('click', function() {
-         infowindow.open($scope.map, stationMarker);
-       });
-    }
-
+    //  ******************************************************************
+    //  CREATING THE FUEL STATION MARKERS AND ADDING THEM TO THE MAP
+    //  ******************************************************************
+    //This will store the Position of all the stations so that in the future
+    //I will be able to loop through this to get the closest station
+    var stationsCoordinates = [];
     function createStationMarkers(data){
       var amountOfStations = data.length;
       for(var i = 0; i < amountOfStations; i++){
@@ -231,14 +195,16 @@ angular.module('starter.controllers', ['ionic','firebase'])
         var petrolPrice = data[i].PetrolPrice;
         var lat = data[i].Position.Lat;
         var lng = data[i].Position.Lng;
-        var coordinates = new google.maps.LatLng(lat,lng);
+        var coordinate = new google.maps.LatLng(lat,lng);
+        //add the coordinate to the array
+        stationsCoordinates[i] = coordinate;
         var content = "<div><h5>Diesel:</h5>"+dieselPrice+" </div><div><h5>Petrol:</h5>"+petrolPrice+"</div>"
 
         var stationMarker = 100+i;
         stationMarker = new google.maps.Marker({
           map: $scope.map,
           id: i,
-          position: coordinates,
+          position: coordinate,
           title: name,
           icon: icon
         });
@@ -252,6 +218,10 @@ angular.module('starter.controllers', ['ionic','firebase'])
            infowindow.open($scope.map, stationMarker);
          });
       }
+  }
+
+  $scope.showArrayData = function(){
+    alert(JSON.stringify(stationsCoordinates));
   }
 
 });
