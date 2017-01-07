@@ -212,8 +212,8 @@ angular.module('starter.controllers', ['ionic','firebase'])
     //I will be able to loop through this to get the closest station
     var stationsCoordinates = [];
     function createStationMarkers(data){
-      var amountOfStations = data.length;
-      for(var i = 0; i < amountOfStations; i++){
+      $scope.amountOfStations = data.length;
+      for(var i = 0; i < $scope.amountOfStations; i++){
         var image = "../www/img/"+data[i].Icon;
         var icon = {
           url: image, // url
@@ -254,8 +254,8 @@ angular.module('starter.controllers', ['ionic','firebase'])
   //  *************************
   var arrayOfDurations = [];
   var service = new google.maps.DistanceMatrixService();
-  $scope.searchForClosestStation = function(){
-
+  function getDistances(callback){
+     var durationTimes = [];
     service.getDistanceMatrix(
       {
         origins: ["Sheffield"],
@@ -271,21 +271,41 @@ angular.module('starter.controllers', ['ionic','firebase'])
           //alert(JSON.stringify(response.rows[0].elements[0]));
           //alert(JSON.stringify(response.rows[0].elements.length));
 
-          // for(var i =0; i < 4; i++){
-          //   alert(i);
-          //   //alert(JSON.stringify(response.rows[0].elements[0].duration.text));
-          //   //arrayOfDurations.push(response.rows[0].elements[0].duration.text);
-          // }
-
-
-          /* So the response responds with all the durations using the stations coordinates
-          I now need to loop through the durations and add them to an array so that I can then
-          calculate the closest station but I have noticed that the for loop doesnt work in the status ok brackets*/
+          for(i = 0; i<$scope.amountOfStations; i++){
+            durationTimes.push(response.rows[0].elements[i].duration.value);
+          }
+          callback(durationTimes);
         } else {
           alert('Directions request failed due to ' + status);
         }
       });
-  }
+
+    };
+
+    function findClosestStation(durationTimes){
+      var shortestDuration = null;
+      var stationNumber = null;
+      for (i = 0; i < $scope.amountOfStations; i++){
+        var durationTime = durationTimes[i];
+        if(shortestDuration === null){
+
+          shortestDuration = durationTime;
+        }else{
+
+          if(durationTime<= shortestDuration){
+            shortestDuration = durationTime;
+            stationNumber = i;
+          }
+        }
+      }
+      alert("Shortes duration time:"+shortestDuration);
+      alert(data[stationNumber].Name);
+      $scope.closestStation = data[stationNumber].Name;
+    }
+
+    $scope.searchForClosestStation = function(){
+      getDistances(findClosestStation);
+    }
 
 
   $scope.showArrayData = function(){
