@@ -51,10 +51,6 @@ angular.module('starter.controllers', ['ionic','firebase'])
       firebase.initializeApp(config);
       database = firebase.database();
     }
-  //  *******************************************
-  //  FOR FINDING THE CLOSEST STATIONS
-  //  *******************************************
-
 
   //  *******************************************
   //  FOR GETTING MY LOCATION AND DISPLAYING MY MARKER
@@ -120,26 +116,33 @@ angular.module('starter.controllers', ['ionic','firebase'])
       directionsDisplay.setPanel(document.getElementById('directions-panel'));
 
       $scope.getMeDirections = function(){
-        navigator.geolocation.getCurrentPosition(onSuccessGetLocation, onErrorGetLocation);
-        directionsService.route({
-          //There is a delay from finding my position
-          //this is therefore causing a lag and resulting
-          //in having to tap the button twice
-          origin: $scope.myLatLngForPosition,
-          destination: "Trafford Quays Leisure Village",
-          travelMode: 'DRIVING'
-        }, function(response, status) {
-          if (status === 'OK') {
-            $scope.directionsPresent = true;
-            directionsDisplay.setDirections(response);
+        var getDirections = function(){
+          directionsService.route({
+            //There is a delay from finding my position
+            //this is therefore causing a lag and resulting
+            //in having to tap the button twice
+            origin: $scope.myLatLngForPosition,
+            destination: "Trafford Quays Leisure Village",
+            travelMode: 'DRIVING'
+          }, function(response, status) {
+            if (status === 'OK') {
+              $scope.directionsPresent = true;
+              directionsDisplay.setDirections(response);
 
-          } else {
-            alert('Directions request failed due to ' + status);
-          }
-        });
+            } else {
+              alert('Directions request failed due to ' + status);
+            }
+          });
+        }
+        findMyLocation(getDirections);
       };
 
-
+      function findMyLocation(callback){
+        navigator.geolocation.getCurrentPosition(onSuccessGetLocation, onErrorGetLocation);
+        if(callback != null){
+          callback();
+        }
+      }
 
 
     var service = new google.maps.DistanceMatrixService();
@@ -255,10 +258,11 @@ angular.module('starter.controllers', ['ionic','firebase'])
   var arrayOfDurations = [];
   var service = new google.maps.DistanceMatrixService();
   function getDistances(callback){
-     var durationTimes = [];
+    var durationTimes = [];
+    findMyLocation(null);
     service.getDistanceMatrix(
       {
-        origins: ["Sheffield"],
+        origins: [$scope.myLatLngForPosition],
         destinations: stationsCoordinates,
         travelMode: 'DRIVING',
         avoidHighways: false,
