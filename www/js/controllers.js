@@ -55,20 +55,7 @@ angular.module('starter.controllers', ['ionic','firebase'])
   //  FOR FINDING THE CLOSEST STATIONS
   //  *******************************************
 
-     $scope.searchForClosestStation = function(){
-      $scope.closestStation = "Testing Shell";
-      for(var i = 0; i < stationsCoordinates.length; i++){
 
-        var journeyTime = getjourneyTime(stationsCoordinates[i]);
-      //  alert(journeyTime]);
-
-      }
-
-      function getjourneyTime(latLng){
-          alert(JSON.stringify(latLng));
-      }
-
-    }
   //  *******************************************
   //  FOR GETTING MY LOCATION AND DISPLAYING MY MARKER
   //  *******************************************
@@ -144,10 +131,6 @@ angular.module('starter.controllers', ['ionic','firebase'])
         }, function(response, status) {
           if (status === 'OK') {
             $scope.directionsPresent = true;
-            //this returns the value as a string
-            alert(JSON.stringify(response.routes[0].legs[0].duration.text));
-            //this returns the value in milliseconds (what we want)
-            alert(JSON.stringify(response.routes[0].legs[0].duration.value));
             directionsDisplay.setDirections(response);
 
           } else {
@@ -156,17 +139,44 @@ angular.module('starter.controllers', ['ionic','firebase'])
         });
       };
 
-      var onSuccessGetLocation = function(position) {
-        var lat = position.coords.latitude;
-        var lng = position.coords.longitude;
-        $scope.myLatLngForPosition = {lat: lat, lng: lng};
 
-    };
 
-    function onErrorGetLocation(error) {
-        alert('code: '    + error.code    + '\n' +
-              'message: ' + error.message + '\n');
+
+    var service = new google.maps.DistanceMatrixService();
+    function addAllDurationsToArray(){
+      arrayOfDurations= [];
+      $scope.closestStation = "Testing Shell";
+      navigator.geolocation.getCurrentPosition(onSuccessGetLocation, onErrorGetLocation);
+      for(var i = 0; i < stationsCoordinates.length; i++){
+        //this ideally should be a function but Im struggling to understand
+        //returning variables in javascript
+          service.getDistanceMatrix(
+            {
+              origin:  $scope.myLatLngForPosition,
+              destination: stationsCoordinates[i],
+              travelMode: 'DRIVING',
+            }, callback);
+
+          function callback(response, status) {
+            alert(JSON.stringify(response));
+          }
+        }
+      //callback();
     }
+
+   var onSuccessGetLocation = function(position) {
+     var lat = position.coords.latitude;
+     var lng = position.coords.longitude;
+     $scope.myLatLngForPosition = {lat: lat, lng: lng};
+
+ };
+
+ function onErrorGetLocation(error) {
+     alert('code: '    + error.code    + '\n' +
+           'message: ' + error.message + '\n');
+ }
+
+
 
     //  *******************************************
     //  FOR TOGGLING DIRECTIONS BOX
@@ -220,27 +230,63 @@ angular.module('starter.controllers', ['ionic','firebase'])
         //add the coordinate to the array
         stationsCoordinates[i] = coordinate;
         var content = "<div><h5>Diesel:</h5>"+dieselPrice+" </div><div><h5>Petrol:</h5>"+petrolPrice+"</div>"
-        var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
-      //  var stationMarker = 100+i;
-      var stationMarker = new google.maps.Marker({
+        //var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+        var stationMarker = new google.maps.Marker({
           map: $scope.map,
           id: i,
           position: coordinate,
           title: name,
-          icon: image
+          icon: icon
         });
-
 
         var infowindow = new google.maps.InfoWindow({
             content: content
           });
 
         stationMarker.addListener('click', function() {
-           // infowindow.open($scope.map, stationMarker);
-           alert(stationMarker.title);
+            infowindow.open($scope.map, stationMarker);
          });
       }
   }
+
+  //  *************************
+  //  FOR CLOSEST STATION
+  //  *************************
+  var arrayOfDurations = [];
+  var service = new google.maps.DistanceMatrixService();
+  $scope.searchForClosestStation = function(){
+
+    service.getDistanceMatrix(
+      {
+        origins: ["Sheffield"],
+        destinations: stationsCoordinates,
+        travelMode: 'DRIVING',
+        avoidHighways: false,
+        avoidTolls: false,
+      }, function(response, status) {
+        if (status === 'OK') {
+          //alert(JSON.stringify(response.rows.elements.duration.text));
+          //alert(JSON.stringify(response.rows[0].elements[0].duration.text));
+          //alert(JSON.stringify(response.rows[0].elements));
+          //alert(JSON.stringify(response.rows[0].elements[0]));
+          //alert(JSON.stringify(response.rows[0].elements.length));
+
+          // for(var i =0; i < 4; i++){
+          //   alert(i);
+          //   //alert(JSON.stringify(response.rows[0].elements[0].duration.text));
+          //   //arrayOfDurations.push(response.rows[0].elements[0].duration.text);
+          // }
+
+
+          /* So the response responds with all the durations using the stations coordinates
+          I now need to loop through the durations and add them to an array so that I can then
+          calculate the closest station but I have noticed that the for loop doesnt work in the status ok brackets*/
+        } else {
+          alert('Directions request failed due to ' + status);
+        }
+      });
+  }
+
 
   $scope.showArrayData = function(){
     alert(JSON.stringify(stationsCoordinates));
