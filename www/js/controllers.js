@@ -16,7 +16,7 @@ angular.module('starter.controllers', ['ionic','firebase'])
   //*******************************************
     $scope.mapCreated = function(map) {
       $scope.map = map;
-      directionsDisplay.setMap($scope.map);
+      $scope.directionsDisplay.setMap($scope.map);
       onPageLoad();
     };
 
@@ -34,6 +34,7 @@ angular.module('starter.controllers', ['ionic','firebase'])
     //********************************************/
     var database = null;
     function onPageLoad(){
+      $scope.directionsPresent = false;
       setupFirebaseConfig();
       setupFuelStations();
 
@@ -107,79 +108,23 @@ angular.module('starter.controllers', ['ionic','firebase'])
         markers[id] = $scope.myLocationMarker;
       }
 
-      //  *******************************************
-      //  FOR GETTING DIRECTIONS TO A MARKER
-      //  *******************************************
-      var directionsService = new google.maps.DirectionsService;
-      var directionsDisplay = new google.maps.DirectionsRenderer;
-      directionsDisplay.setMap($scope.map);
-      directionsDisplay.setPanel(document.getElementById('directions-panel'));
-
-      $scope.getMeDirections = function(){
-        var getDirections = function(){
-          directionsService.route({
-            //There is a delay from finding my position
-            //this is therefore causing a lag and resulting
-            //in having to tap the button twice
-            origin: $scope.myLatLngForPosition,
-            destination: "Trafford Quays Leisure Village",
-            travelMode: 'DRIVING'
-          }, function(response, status) {
-            if (status === 'OK') {
-              $scope.directionsPresent = true;
-              directionsDisplay.setDirections(response);
-
-            } else {
-              alert('Directions request failed due to ' + status);
-            }
-          });
-        }
-        findMyLocation(getDirections);
-      };
-
-      function findMyLocation(callback){
+      /********************************************************
+      FOR FINDING MY LOCATION
+      /************************************************/
+      function findMyLocation(){
         navigator.geolocation.getCurrentPosition(onSuccessGetLocation, onErrorGetLocation);
-        if(callback != null){
-          callback();
-        }
       }
 
+      var onSuccessGetLocation = function(position) {
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+        $scope.myLatLngForPosition = {lat: lat, lng: lng};
+      };
 
-    var service = new google.maps.DistanceMatrixService();
-    function addAllDurationsToArray(){
-      arrayOfDurations= [];
-      $scope.closestStation = "Testing Shell";
-      navigator.geolocation.getCurrentPosition(onSuccessGetLocation, onErrorGetLocation);
-      for(var i = 0; i < stationsCoordinates.length; i++){
-        //this ideally should be a function but Im struggling to understand
-        //returning variables in javascript
-          service.getDistanceMatrix(
-            {
-              origin:  $scope.myLatLngForPosition,
-              destination: stationsCoordinates[i],
-              travelMode: 'DRIVING',
-            }, callback);
-
-          function callback(response, status) {
-            alert(JSON.stringify(response));
-          }
-        }
-      //callback();
-    }
-
-   var onSuccessGetLocation = function(position) {
-     var lat = position.coords.latitude;
-     var lng = position.coords.longitude;
-     $scope.myLatLngForPosition = {lat: lat, lng: lng};
-
- };
-
- function onErrorGetLocation(error) {
-     alert('code: '    + error.code    + '\n' +
-           'message: ' + error.message + '\n');
- }
-
-
+      function onErrorGetLocation(error) {
+        alert('code: '    + error.code    + '\n' +
+        'message: ' + error.message + '\n');
+      }
 
     //  *******************************************
     //  FOR TOGGLING DIRECTIONS BOX
@@ -188,10 +133,10 @@ angular.module('starter.controllers', ['ionic','firebase'])
       var divSize = document.getElementById("editBox").style.height;
       if (divSize != "10%"){
         document.getElementById('editBox').style.height = '10%';
-        document.getElementById('editBox').style.marginTop = '140%';
+        document.getElementById('editBox').style.marginTop = '150%';
       }  else{
           document.getElementById('editBox').style.height = '31%';
-          document.getElementById('editBox').style.marginTop = '120%';
+          document.getElementById('editBox').style.marginTop = '110%';
         }
     }
 
@@ -259,7 +204,7 @@ angular.module('starter.controllers', ['ionic','firebase'])
   var service = new google.maps.DistanceMatrixService();
   function getDistances(callback){
     var durationTimes = [];
-    findMyLocation(null);
+    findMyLocation();
     service.getDistanceMatrix(
       {
         origins: [$scope.myLatLngForPosition],
@@ -331,12 +276,16 @@ angular.module('starter.controllers', ['ionic','firebase'])
 
      };
 
+     /************************************************
+     FOR GETTING DIRECTIONS TO THE STATION USING THE POPUP
+     /************************************************/
+
      function getDirections(stationNumber){
-       alert("Getting directions");
+       $scope.directionsPresent = true;
        var directionsService = new google.maps.DirectionsService;
-       var directionsDisplay = new google.maps.DirectionsRenderer;
-       directionsDisplay.setMap($scope.map);
-       directionsDisplay.setPanel(document.getElementById('directions-panel'));
+       $scope.directionsDisplay = new google.maps.DirectionsRenderer;
+       $scope.directionsDisplay.setMap($scope.map);
+       $scope.directionsDisplay.setPanel(document.getElementById('directions-panel'));
        var lat = data[stationNumber].Position.Lat;
        var lng = data[stationNumber].Position.Lng;
        var coordinate = new google.maps.LatLng(lat,lng);
@@ -351,7 +300,7 @@ angular.module('starter.controllers', ['ionic','firebase'])
        }, function(response, status) {
          if (status === 'OK') {
            $scope.directionsPresent = true;
-           directionsDisplay.setDirections(response);
+           $scope.directionsDisplay.setDirections(response);
          } else {
            alert('Directions request failed due to ' + status);
          }
@@ -364,9 +313,9 @@ angular.module('starter.controllers', ['ionic','firebase'])
      //  FOR GETTING DIRECTIONS TO A MARKER
      //  *******************************************
      var directionsService = new google.maps.DirectionsService;
-     var directionsDisplay = new google.maps.DirectionsRenderer;
-     directionsDisplay.setMap($scope.map);
-     directionsDisplay.setPanel(document.getElementById('directions-panel'));
+     $scope.directionsDisplay = new google.maps.DirectionsRenderer;
+     $scope.directionsDisplay.setMap($scope.map);
+     $scope.directionsDisplay.setPanel(document.getElementById('directions-panel'));
 
      $scope.getMeDirections = function(){
        var getDirections = function(){
@@ -380,7 +329,7 @@ angular.module('starter.controllers', ['ionic','firebase'])
          }, function(response, status) {
            if (status === 'OK') {
              $scope.directionsPresent = true;
-             directionsDisplay.setDirections(response);
+             $scope.directionsDisplay.setDirections(response);
 
            } else {
              alert('Directions request failed due to ' + status);
@@ -390,6 +339,14 @@ angular.module('starter.controllers', ['ionic','firebase'])
        findMyLocation(getDirections);
      };
 
+     //****************************************************
+     //FOR CLEARING THE DIRECTIONS
+     //****************************************************
+
+     $scope.clearDirections = function(){
+       $scope.directionsPresent = false;
+       $scope.directionsDisplay.setMap(null);
+     }
     $scope.searchForClosestStation = function(){
       getDistances(findClosestStation);
     }
