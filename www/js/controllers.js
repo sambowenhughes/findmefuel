@@ -1,6 +1,6 @@
 angular.module('starter.controllers', ['ionic','firebase'])
 
-.controller('MapCtrl', function($scope, $state, $ionicLoading,  $ionicActionSheet, $ionicPopover, $firebase) {
+.controller('MapCtrl', function($scope, $state, $ionicLoading,  $ionicActionSheet, $ionicPopover, $firebase, $ionicPopup) {
 
   $scope.stateChanger = function(){
     $state.go('app.mainMap');
@@ -188,10 +188,10 @@ angular.module('starter.controllers', ['ionic','firebase'])
       var divSize = document.getElementById("editBox").style.height;
       if (divSize != "10%"){
         document.getElementById('editBox').style.height = '10%';
-        document.getElementById('editBox').style.marginTop = '115%';
+        document.getElementById('editBox').style.marginTop = '140%';
       }  else{
           document.getElementById('editBox').style.height = '31%';
-          document.getElementById('editBox').style.marginTop = '80%';
+          document.getElementById('editBox').style.marginTop = '120%';
         }
     }
 
@@ -269,12 +269,7 @@ angular.module('starter.controllers', ['ionic','firebase'])
         avoidTolls: false,
       }, function(response, status) {
         if (status === 'OK') {
-          //alert(JSON.stringify(response.rows.elements.duration.text));
-          //alert(JSON.stringify(response.rows[0].elements[0].duration.text));
-          //alert(JSON.stringify(response.rows[0].elements));
-          //alert(JSON.stringify(response.rows[0].elements[0]));
-          //alert(JSON.stringify(response.rows[0].elements.length));
-
+          //loop through the response and add the duration to the array
           for(i = 0; i<$scope.amountOfStations; i++){
             durationTimes.push(response.rows[0].elements[i].duration.value);
           }
@@ -295,25 +290,108 @@ angular.module('starter.controllers', ['ionic','firebase'])
 
           shortestDuration = durationTime;
         }else{
-
           if(durationTime<= shortestDuration){
             shortestDuration = durationTime;
             stationNumber = i;
           }
         }
       }
-      alert("Shortes duration time:"+shortestDuration);
-      alert(data[stationNumber].Name);
-      $scope.closestStation = data[stationNumber].Name;
+
+      $scope.closestStation = data[stationNumber];
+      showPopUp(stationNumber);
     }
+
+    //  *************************
+    //  FOR CLOSEST STATION POP UP
+    //  *************************
+
+    function showPopUp(sNumber) {
+      // An elaborate, custom popup
+      $scope.stationNumberForDirections = sNumber;
+      var myPopup = $ionicPopup.show({
+        scope: $scope,
+        title:$scope.closestStation.Name,
+        templateUrl: 'templates/closestStationPopup.html',
+        buttons: [
+          { text: 'Cancel',
+            type: 'button-assertive'},
+          {
+            text: '<b>Directions</b>',
+            type: 'button-positive',
+            onTap: function(e) {
+              getDirections($scope.stationNumberForDirections);
+            }
+          }
+        ]
+    });
+
+      myPopup.then(function(res) {
+        console.log('Tapped!', res);
+      });
+
+     };
+
+     function getDirections(stationNumber){
+       alert("Getting directions");
+       var directionsService = new google.maps.DirectionsService;
+       var directionsDisplay = new google.maps.DirectionsRenderer;
+       directionsDisplay.setMap($scope.map);
+       directionsDisplay.setPanel(document.getElementById('directions-panel'));
+       var lat = data[stationNumber].Position.Lat;
+       var lng = data[stationNumber].Position.Lng;
+       var coordinate = new google.maps.LatLng(lat,lng);
+
+       directionsService.route({
+         //There is a delay from finding my position
+         //this is therefore causing a lag and resulting
+         //in having to tap the button twice
+         origin: $scope.myLatLngForPosition,
+         destination: coordinate,
+         travelMode: 'DRIVING'
+       }, function(response, status) {
+         if (status === 'OK') {
+           $scope.directionsPresent = true;
+           directionsDisplay.setDirections(response);
+         } else {
+           alert('Directions request failed due to ' + status);
+         }
+       });
+
+
+
+     }
+     //  *******************************************
+     //  FOR GETTING DIRECTIONS TO A MARKER
+     //  *******************************************
+     var directionsService = new google.maps.DirectionsService;
+     var directionsDisplay = new google.maps.DirectionsRenderer;
+     directionsDisplay.setMap($scope.map);
+     directionsDisplay.setPanel(document.getElementById('directions-panel'));
+
+     $scope.getMeDirections = function(){
+       var getDirections = function(){
+         directionsService.route({
+           //There is a delay from finding my position
+           //this is therefore causing a lag and resulting
+           //in having to tap the button twice
+           origin: $scope.myLatLngForPosition,
+           destination: "Trafford Quays Leisure Village",
+           travelMode: 'DRIVING'
+         }, function(response, status) {
+           if (status === 'OK') {
+             $scope.directionsPresent = true;
+             directionsDisplay.setDirections(response);
+
+           } else {
+             alert('Directions request failed due to ' + status);
+           }
+         });
+       }
+       findMyLocation(getDirections);
+     };
 
     $scope.searchForClosestStation = function(){
       getDistances(findClosestStation);
     }
-
-
-  $scope.showArrayData = function(){
-    alert(JSON.stringify(stationsCoordinates));
-  }
 
 });
