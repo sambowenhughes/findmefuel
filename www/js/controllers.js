@@ -204,6 +204,8 @@ angular.module('starter.controllers', ['ionic','firebase'])
   var service = new google.maps.DistanceMatrixService();
   function getDistances(callback){
     var durationTimes = [];
+    var distance = [];
+    var durationTextTime = [];
     findMyLocation();
     service.getDistanceMatrix(
       {
@@ -216,9 +218,12 @@ angular.module('starter.controllers', ['ionic','firebase'])
         if (status === 'OK') {
           //loop through the response and add the duration to the array
           for(i = 0; i<$scope.amountOfStations; i++){
+            //should not be passing three arrays over ideally one array
             durationTimes.push(response.rows[0].elements[i].duration.value);
+            distance.push(response.rows[0].elements[i].distance.text);
+            durationTextTime.push(response.rows[0].elements[i].duration.text);
           }
-          callback(durationTimes);
+          callback(durationTimes, distance, durationTextTime);
         } else {
           alert('Directions request failed due to ' + status);
         }
@@ -226,8 +231,9 @@ angular.module('starter.controllers', ['ionic','firebase'])
 
     };
 
-    function findClosestStation(durationTimes){
+    function findClosestStation(durationTimes, distance, durationTextTime){
       var shortestDuration = null;
+
       var stationNumber = null;
       for (i = 0; i < $scope.amountOfStations; i++){
         var durationTime = durationTimes[i];
@@ -243,6 +249,8 @@ angular.module('starter.controllers', ['ionic','firebase'])
       }
 
       $scope.closestStation = data[stationNumber];
+      $scope.distancetoDest = distance[stationNumber];
+      $scope.timeTakenString = durationTextTime[stationNumber];
       showPopUp(stationNumber);
     }
 
@@ -300,6 +308,8 @@ angular.module('starter.controllers', ['ionic','firebase'])
        }, function(response, status) {
          if (status === 'OK') {
            $scope.directionsPresent = true;
+           var distance = response.routes[0].legs[0].distance.text;
+           var duration = response.routes[0].legs[0].duration.text;
            $scope.directionsDisplay.setDirections(response);
          } else {
            alert('Directions request failed due to ' + status);
@@ -317,27 +327,7 @@ angular.module('starter.controllers', ['ionic','firebase'])
      $scope.directionsDisplay.setMap($scope.map);
      $scope.directionsDisplay.setPanel(document.getElementById('directions-panel'));
 
-     $scope.getMeDirections = function(){
-       var getDirections = function(){
-         directionsService.route({
-           //There is a delay from finding my position
-           //this is therefore causing a lag and resulting
-           //in having to tap the button twice
-           origin: $scope.myLatLngForPosition,
-           destination: "Trafford Quays Leisure Village",
-           travelMode: 'DRIVING'
-         }, function(response, status) {
-           if (status === 'OK') {
-             $scope.directionsPresent = true;
-             $scope.directionsDisplay.setDirections(response);
 
-           } else {
-             alert('Directions request failed due to ' + status);
-           }
-         });
-       }
-       findMyLocation(getDirections);
-     };
 
      //****************************************************
      //FOR CLEARING THE DIRECTIONS
@@ -349,6 +339,13 @@ angular.module('starter.controllers', ['ionic','firebase'])
      }
     $scope.searchForClosestStation = function(){
       getDistances(findClosestStation);
+    }
+
+    /*****************************************************
+    //  FOR GOING BACK TO THE HOMEPAGE
+    /****************************************************/
+    $scope.goBackToHomepage = function(){
+        $state.go('app.mainMap');
     }
 
 });

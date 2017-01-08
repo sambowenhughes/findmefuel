@@ -25,6 +25,17 @@ angular.module('starter', ['ionic', 'starter.controllers','firebase', 'starter.d
           templateUrl: 'templates/map.html'
         }
       }
-    });
+    })
+    
+    .state('app.homePage', {
+        url: '/home',
+        views: {
+          'menuContent': {
+            templateUrl: 'index.html'
+          }
+        }
+      }
+
+  );
   // if none of the above states are matched, use this as the fallback
 });
