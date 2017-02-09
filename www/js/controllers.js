@@ -223,7 +223,10 @@ angular.module('starter.controllers', ['ionic','firebase'])
             distance.push(response.rows[0].elements[i].distance.text);
             durationTextTime.push(response.rows[0].elements[i].duration.text);
           }
+          // alert("check");
+          // alert("distance:"+distance);
           callback(durationTimes, distance, durationTextTime);
+
         } else {
           alert('Directions request failed due to ' + status);
         }
@@ -238,19 +241,22 @@ angular.module('starter.controllers', ['ionic','firebase'])
       for (i = 0; i < $scope.amountOfStations; i++){
         var durationTime = durationTimes[i];
         if(shortestDuration === null){
-
           shortestDuration = durationTime;
-        }else{
+        }
           if(durationTime<= shortestDuration){
             shortestDuration = durationTime;
             stationNumber = i;
+          }else{
+            alert("no stations to show");
           }
-        }
+
       }
 
       $scope.closestStation = data[stationNumber];
       $scope.distancetoDest = distance[stationNumber];
       $scope.timeTakenString = durationTextTime[stationNumber];
+
+
       showPopUp(stationNumber);
     }
 

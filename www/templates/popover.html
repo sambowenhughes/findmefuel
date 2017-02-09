@@ -9,12 +9,12 @@
               &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Stop Following me
             </a>
             <a class="item ion-ios-location" target="_blank" ng-show="!directionsPresent" ng-click="searchForClosestStation(); popover.hide($event);">
-              &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Stations Near Me
+              &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Nearest Station
             </a>
             <a class="item ion-android-hand assertive" ng-show="directionsPresent" target="_blank" ng-click="clearDirections(); popover.hide($event);">
               &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Clear Directions
             </a>
-            <a class="item ion-gear-a" target="_blank" ng-click="">
+            <a class="item ion-gear-a" target="_blank" ng-click="showPopUp();">
               &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp My Preferences
             </a>
             <a class="item ion-android-home" target="_blank" ng-click="goBackToHomepage();">

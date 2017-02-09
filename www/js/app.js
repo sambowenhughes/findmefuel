@@ -26,7 +26,7 @@ angular.module('starter', ['ionic', 'starter.controllers','firebase', 'starter.d
         }
       }
     })
-    
+
     .state('app.homePage', {
         url: '/home',
         views: {
