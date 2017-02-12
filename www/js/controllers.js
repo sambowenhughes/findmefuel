@@ -94,7 +94,7 @@ angular.module('starter.controllers', ['ionic','firebase'])
       function createMarker(){
         var id = 1;
         var icon = {
-          url: "../www/img/car_icon.png", // url
+          url: "../www/img/car_iconWhite.png", // url
           scaledSize: new google.maps.Size(30, 30), // scaled size
           origin: new google.maps.Point(0,0), // origin
           anchor: new google.maps.Point(0, 0) // anchor
@@ -234,28 +234,74 @@ angular.module('starter.controllers', ['ionic','firebase'])
 
     };
 
+
+
+
+    $scope.listOfStationsFound = [];
+    $scope.stationFound = {};
+    $scope.stationFound2 = {};
     function findClosestStation(durationTimes, distance, durationTextTime){
-      var shortestDuration = null;
 
-      var stationNumber = null;
-      for (i = 0; i < $scope.amountOfStations; i++){
-        var durationTime = durationTimes[i];
-        if(shortestDuration === null){
-          shortestDuration = durationTime;
-        }
-          if(durationTime<= shortestDuration){
-            shortestDuration = durationTime;
-            stationNumber = i;
-          }else{
-            alert("no stations to show");
-          }
+    //
+    //   var stationNumber = null;
+    //   for (i = 0; i < $scope.amountOfStations; i++){
+    //     var durationTime = durationTimes[i];
+    //     if(shortestDuration === null){
+    //       shortestDuration = durationTime;
+    //     }
+    //       if(durationTime<= shortestDuration){
+    //         shortestDuration = durationTime;
+    //         stationNumber = i;
+    //       }else{
+    //         alert("no stations to show");
+    //       }
+    //
+    //   }
+    //   $scope.stationFound =  data[stationNumber];
+    //   //  $scope.stationFound.distancetoDest =  "wooo";
+    //
+    //   // $scope.stationFound.timeTakenString = durationTextTime[stationNumber];
+    //   // $scope.listOfStationsFound.push(stationFound);
+    //
+    //   showPopUp(stationNumber);
+    // }
+    //
+    //
+    // var shortestDuration = null;
+    //
+    //   var stationNumber = null;
+    //   var stationNumber2 = null;
+    //   for (i = 0; i < $scope.amountOfStations; i++){
+    //     var durationTime = durationTimes[i];
+    //     if(shortestDuration === null){
+    //       shortestDuration = durationTime;
+    //     }
+    //       if(durationTime<= shortestDuration){
+    //         stationNumber2 = stationNumber.value;
+    //         shortestDuration = durationTime;
+    //         stationNumber = i;
+    //       }else{
+    //         alert("no stations to show");
+    //       }
+    // }
 
-      }
+      var copy = JSON.parse(JSON.stringify(durationTimes));
+      var sortedDurationTimes = durationTimes.sort();
 
-      $scope.closestStation = data[stationNumber];
-      $scope.distancetoDest = distance[stationNumber];
-      $scope.timeTakenString = durationTextTime[stationNumber];
+      var getShortestTime = sortedDurationTimes[0];
+      var getSecondShortestTime = sortedDurationTimes[1];
 
+
+      var stationNumber = copy.indexOf(getShortestTime);
+      var stationNumber2 = copy.indexOf(getSecondShortestTime);
+
+      $scope.stationFound.closestStation = data[stationNumber];
+      $scope.stationFound.distancetoDest = distance[stationNumber];
+      $scope.stationFound.timeTakenString = durationTextTime[stationNumber];
+
+      $scope.stationFound2.closestStation = data[stationNumber2];
+      $scope.stationFound2.distancetoDest = distance[stationNumber2];
+      $scope.stationFound2.timeTakenString = durationTextTime[stationNumber2];
 
       showPopUp(stationNumber);
     }
@@ -266,10 +312,10 @@ angular.module('starter.controllers', ['ionic','firebase'])
 
     function showPopUp(sNumber) {
       // An elaborate, custom popup
-      $scope.stationNumberForDirections = sNumber;
+      var stationNumberForDirections = sNumber;
       var myPopup = $ionicPopup.show({
         scope: $scope,
-        title:$scope.closestStation.Name,
+        title:$scope.stationFound.closestStation.Name,
         templateUrl: 'templates/closestStationPopup.html',
         buttons: [
           { text: 'Cancel',
@@ -278,7 +324,7 @@ angular.module('starter.controllers', ['ionic','firebase'])
             text: '<b>Directions</b>',
             type: 'button-positive',
             onTap: function(e) {
-              getDirections($scope.stationNumberForDirections);
+              getDirections(stationNumberForDirections);
             }
           }
         ]
