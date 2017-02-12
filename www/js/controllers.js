@@ -178,7 +178,7 @@ angular.module('starter.controllers', ['ionic','firebase'])
         //add the coordinate to the array
         stationsCoordinates[i] = coordinate;
         var content = "<div><h5>Diesel:</h5>"+dieselPrice+" </div><div><h5>Petrol:</h5>"+petrolPrice+"</div>"
-        //var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+        var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
         var stationMarker = new google.maps.Marker({
           map: $scope.map,
           id: i,
@@ -285,8 +285,11 @@ angular.module('starter.controllers', ['ionic','firebase'])
     //       }
     // }
 
+
       var copy = JSON.parse(JSON.stringify(durationTimes));
       var sortedDurationTimes = durationTimes.sort();
+      //THERE IS A BUG WITH JAVASCIPTS ARRAY>SORT()
+      // IT DOESNT WORK IF THERE IS A HUGE DIFFERENCE WITHIN VALUES
 
       var getShortestTime = sortedDurationTimes[0];
       var getSecondShortestTime = sortedDurationTimes[1];
