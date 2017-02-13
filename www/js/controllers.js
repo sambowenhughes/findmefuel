@@ -236,7 +236,8 @@ angular.module('starter.controllers', ['ionic','firebase'])
 
 
 
-
+    $scope.KPG = null;
+    $scope.averageFuelPrice = null;
     $scope.listOfStationsFound = [];
     $scope.stationFound = {};
     $scope.stationFound2 = {};
@@ -288,52 +289,65 @@ angular.module('starter.controllers', ['ionic','firebase'])
 
       var copy = JSON.parse(JSON.stringify(durationTimes));
       var sortedDurationTimes = durationTimes.sort();
-      //THERE IS A BUG WITH JAVASCIPTS ARRAY>SORT()
-      // IT DOESNT WORK IF THERE IS A HUGE DIFFERENCE WITHIN VALUES
+      //THERE IS A BUG WITH JAVASCIPTS ARRAY.SORT()
+      //IT DOESNT WORK IF THERE IS A HUGE DIFFERENCE WITHIN VALUES
 
       var getShortestTime = sortedDurationTimes[0];
       var getSecondShortestTime = sortedDurationTimes[1];
 
-
+      //GET THE INDEX OF THE STATION IN THE LIST SO THAT WE CAN GET IT FROM THE
+      //FIREBASE DATABASE
       var stationNumber = copy.indexOf(getShortestTime);
       var stationNumber2 = copy.indexOf(getSecondShortestTime);
 
+      //ALL INFORMATION ABOUT THE CLOSEST STATION
       $scope.stationFound.closestStation = data[stationNumber];
       $scope.stationFound.distancetoDest = distance[stationNumber];
       $scope.stationFound.timeTakenString = durationTextTime[stationNumber];
-
+      //ALL INFORMATION ABOUT THE SECOND CLOSEST STATION
       $scope.stationFound2.closestStation = data[stationNumber2];
       $scope.stationFound2.distancetoDest = distance[stationNumber2];
       $scope.stationFound2.timeTakenString = durationTextTime[stationNumber2];
 
+      //PARSE THE TIME TAKEN INTO AN INT SO A CALCULATION CAN BE MADE
       var closestTimeTaken =  parseInt($scope.stationFound.timeTakenString);
       var closestTimeTaken2 = parseInt($scope.stationFound2.timeTakenString);
-
+      //CALCULATE THE EXTRA TIME TAKEN TO GET TO THE NEXT STATION
       $scope.extraTimeTaken = closestTimeTaken2 - closestTimeTaken;
 
-      //CALCULATING JOURNEY COST TO CLOSEST STATION
-      var KPG = 33;
-      var closestStationDistanceAsString = $scope.stationFound.distancetoDest.replace('km','');
-      var closestStationDistance = parseFloat(closestStationDistanceAsString);
-      var fuelcost = 100; //£1
-      var ALIG = 4.54609; //Amount of litres in a gallon
+      if(($scope.KPG != null)&&($scope.averageFuelPrice != null)){
+        //CALCULATING JOURNEY COST TO CLOSEST STATION
+        //KM per gallon of the vehicle (need to change this so it gets it from the preferences page) ---------------
+        var KPG = parseInt($scope.KPG);
+        //remove the KM from the string so that it can be parsed later on
+        var closestStationDistanceAsString = $scope.stationFound.distancetoDest.replace('km','');
+        //parse the string into a float
+        var closestStationDistance = parseFloat(closestStationDistanceAsString);
+        var fuelcost = parseInt($scope.averageFuelPrice); //£1 (Need to change this so that it gets it from the prefeenreces page)-----------------
+        var ALIG = 4.54609; //Amount of litres in a gallon
 
-      var gallonsUsed = closestStationDistance/KPG;
-      var costOfJourney = (((gallonsUsed*ALIG)*fuelcost)/100);
-      $scope.costOfJourney = costOfJourney.toFixed(2);
-      //CALCULATING JOURNEY COST TO SECOND CLOSEST STATION
-      var closestStationDistanceAsString2 = $scope.stationFound2.distancetoDest.replace('km','');
-      var closestStationDistance2 = parseFloat(closestStationDistanceAsString2);
+        //CALCULATION FOR COST OF JOURNEY
+        var gallonsUsed = closestStationDistance/KPG;
+        var costOfJourney = (((gallonsUsed*ALIG)*fuelcost)/100);
+        $scope.costOfJourney = costOfJourney.toFixed(2);
+        //CALCULATING JOURNEY COST TO SECOND CLOSEST STATION
+        var closestStationDistanceAsString2 = $scope.stationFound2.distancetoDest.replace('km','');
+        var closestStationDistance2 = parseFloat(closestStationDistanceAsString2);
 
-      var gallonsUsed = closestStationDistance2/KPG;
-      var costOfJourney2 = (((gallonsUsed*ALIG)*fuelcost)/100);
-      $scope.costOfJourney2 = costOfJourney2.toFixed(2);
+        var gallonsUsed = closestStationDistance2/KPG;
+        var costOfJourney2 = (((gallonsUsed*ALIG)*fuelcost)/100);
+        $scope.costOfJourney2 = costOfJourney2.toFixed(2);
 
+        //Calculate the amount saved
+        var amountSaved = ($scope.costOfJourney2-$scope.costOfJourney);
+        $scope.amountSaved = amountSaved.toFixed(2);
 
-      var amountSaved = ($scope.costOfJourney2-$scope.costOfJourney);
-      $scope.amountSaved = amountSaved.toFixed(2);
+        showPopUp(stationNumber);
 
-      showPopUp(stationNumber);
+      }else{
+        $scope.showPreferencesPopup("ERROR - Edit preferences first");
+      }
+
     }
 
     //  *************************
@@ -365,6 +379,43 @@ angular.module('starter.controllers', ['ionic','firebase'])
       });
 
      };
+
+     //  *************************
+     //  FOR PREFER POP UP
+     //  *************************
+
+      $scope.showPreferencesPopup = function(message){
+        var prefPopup = $ionicPopup.show({
+          scope: $scope,
+          title: message,
+          templateUrl: 'templates/preferencesPopup.html',
+          buttons: [
+            { text: 'Cancel',
+              type: 'button-assertive'},
+            {
+              text: 'Update',
+              type: 'button-balanced',
+              onTap: function(e) {
+                console.log("preferences saved");
+              }
+            }
+          ]
+      });
+
+        myPopup.then(function(res) {
+          console.log('Tapped!', res);
+        });
+
+       };
+
+       //DEFINE THE FUEL PRICE AND MPG FOR CALC ROUTE PRICE
+       $scope.defineFuelPrice = function(optionSelected) {
+          $scope.averageFuelPrice = optionSelected;
+      };
+
+        $scope.defineMPG = function(optionSelected) {
+           $scope.KPG = optionSelected;
+       };
 
      /************************************************
      FOR GETTING DIRECTIONS TO THE STATION USING THE POPUP

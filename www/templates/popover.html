@@ -14,7 +14,7 @@
             <a class="item ion-android-hand assertive" ng-show="directionsPresent" target="_blank" ng-click="clearDirections(); popover.hide($event);">
               &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Clear Directions
             </a>
-            <a class="item ion-gear-a" target="_blank" ng-click="showPopUp();">
+            <a class="item ion-gear-a" target="_blank" ng-click=" popover.hide($event);showPreferencesPopup('Select your preferences');">
               &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp My Preferences
             </a>
             <a class="item ion-android-home" target="_blank" ng-click="goBackToHomepage();">
