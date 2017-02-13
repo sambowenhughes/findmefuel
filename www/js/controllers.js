@@ -311,19 +311,27 @@ angular.module('starter.controllers', ['ionic','firebase'])
 
       $scope.extraTimeTaken = closestTimeTaken2 - closestTimeTaken;
 
-      //CALCULATING JOURNEY COST TO STATION
+      //CALCULATING JOURNEY COST TO CLOSEST STATION
       var KPG = 33;
-      var kmInJourneyAsString = $scope.stationFound.distancetoDest.replace('km','');
-      var kmInJourney = parseFloat(kmInJourneyAsString);
+      var closestStationDistanceAsString = $scope.stationFound.distancetoDest.replace('km','');
+      var closestStationDistance = parseFloat(closestStationDistanceAsString);
       var fuelcost = 100; //£1
       var ALIG = 4.54609; //Amount of litres in a gallon
 
-      var gallonsUsed = kmInJourney/KPG;
+      var gallonsUsed = closestStationDistance/KPG;
       var costOfJourney = (((gallonsUsed*ALIG)*fuelcost)/100);
       $scope.costOfJourney = costOfJourney.toFixed(2);
+      //CALCULATING JOURNEY COST TO SECOND CLOSEST STATION
+      var closestStationDistanceAsString2 = $scope.stationFound2.distancetoDest.replace('km','');
+      var closestStationDistance2 = parseFloat(closestStationDistanceAsString2);
+
+      var gallonsUsed = closestStationDistance2/KPG;
+      var costOfJourney2 = (((gallonsUsed*ALIG)*fuelcost)/100);
+      $scope.costOfJourney2 = costOfJourney2.toFixed(2);
 
 
-
+      var amountSaved = ($scope.costOfJourney2-$scope.costOfJourney);
+      $scope.amountSaved = amountSaved.toFixed(2);
 
       showPopUp(stationNumber);
     }
