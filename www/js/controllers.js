@@ -306,6 +306,25 @@ angular.module('starter.controllers', ['ionic','firebase'])
       $scope.stationFound2.distancetoDest = distance[stationNumber2];
       $scope.stationFound2.timeTakenString = durationTextTime[stationNumber2];
 
+      var closestTimeTaken =  parseInt($scope.stationFound.timeTakenString);
+      var closestTimeTaken2 = parseInt($scope.stationFound2.timeTakenString);
+
+      $scope.extraTimeTaken = closestTimeTaken2 - closestTimeTaken;
+
+      //CALCULATING JOURNEY COST TO STATION
+      var KPG = 33;
+      var kmInJourneyAsString = $scope.stationFound.distancetoDest.replace('km','');
+      var kmInJourney = parseFloat(kmInJourneyAsString);
+      var fuelcost = 100; //£1
+      var ALIG = 4.54609; //Amount of litres in a gallon
+
+      var gallonsUsed = kmInJourney/KPG;
+      var costOfJourney = (((gallonsUsed*ALIG)*fuelcost)/100);
+      $scope.costOfJourney = costOfJourney.toFixed(2);
+
+
+
+
       showPopUp(stationNumber);
     }
 

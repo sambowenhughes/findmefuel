@@ -1,6 +1,7 @@
 
  <div class="closestStationPopupBox">
      <div class="station">
+       <p>This journey will cost you: £<b>{{costOfJourney}}</b></p>
        <div class="fuelPrices">
          <p>Distance: {{stationFound.distancetoDest}}</p>
          <p>Time: {{stationFound.timeTakenString}}</p>
@@ -16,7 +17,7 @@
        <br>
        <br>
        <br>
-       Next closest station is <b>{{stationFound2.distancetoDest}}</b> away
+       The next closest station would have taken you an extra <b>{{extraTimeTaken}}</b> minutes, it is <b>{{stationFound2.distancetoDest}}</b> away from your current postion
        <!-- <div>
          <p>Distance: {{stationFound2.distancetoDest}}</p>
          <p>Time: {{stationFound2.timeTakenString}}</p>
